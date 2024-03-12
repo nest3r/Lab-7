@@ -1,55 +1,59 @@
+import time
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+list1 = [np.random.random() for _ in range(1000000)]
+list2 = [np.random.random() for _ in range(1000000)]
+array1 = np.array(list1)
+array2 = np.array(list2)
 
-def start():
-    arr = np.array([5, 9, 10, 'ad', 7])
-    arr = arr[::-1]
-    print(arr)
+start = time.perf_counter()
+result_list = [a * b for a, b in zip(list1, list2)]
+end = time.perf_counter()
+list_time = end - start
 
+start = time.perf_counter()
+result_array = np.multiply(array1, array2)
+end = time.perf_counter()
+array_time = end - start
 
-def tableLoad():
-    arr = np.genfromtxt('voltage.csv', delimiter=',')
-    time = arr[:100,0]
-    time = time[:,np.newaxis]
-    curr = arr[:100,1]
-    curr = curr[:,np.newaxis]
-    volt = arr[:100,2]
-    volt = volt[:,np.newaxis]
+print("Время выполнения для стандартного списка:", list_time)
+print("Время выполнения для массива:", array_time)
 
-    plt.plot(time, curr * 50, 'b', time, volt, 'r')
-    plt.show()
+data = pd.read_csv('data2.csv')
 
+column_data = data.iloc[:, 3]
 
-def hist():
-    arr = np.genfromtxt('test.csv', delimiter=',')
-    arr = arr[1:]
-    daysInYear = 365.25
+plt.figure(figsize=(10, 5))
+plt.hist(column_data, bins=20, color='black')
+plt.title('Гистограмма')
+plt.xlabel('Значения')
+plt.ylabel('Частота')
+plt.show()
 
-    age = np.int_(arr[:,1] / daysInYear)
+plt.figure(figsize=(10, 5))
+plt.hist(column_data, bins=20, edgecolor='black', density=True, cumulative=True)
+plt.title('Эквализированная гистограмма')
+plt.xlabel('Значения')
+plt.ylabel('Кумулятивная частота')
 
-    fig = plt.figure(figsize=(6, 4))
-    ax = fig.add_subplot()
-    ax.hist(age, 100, (50, 60))
-    ax.grid()
-    plt.show()
-
-
-def plot3d():
-    np.random.seed(40)
-    xs = np.linspace(0, 10, 20)
-    ys = xs
-    zs = np.sin(xs)
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot(xs, ys, zs, marker='x', c='red')
-    plt.show()
+std_deviation = column_data.std()
+print("Среднеквадратичное отклонение:", std_deviation)
 
 
-if __name__ == '__main__':
-    #start()
-    #tableLoad()
-    #hist()
-    plot3d()
+x = np.linspace(-3 * np.pi, 3 * np.pi, 100)
+y = np.cos(x)
+z = x / np.sin(x)
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot(x, y, z)
+
+ax.set_title('3D График')
+ax.set_xlabel('Ось X')
+ax.set_ylabel('Ось Y')
+ax.set_zlabel('Ось Z')
+
+plt.show()
